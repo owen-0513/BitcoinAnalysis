@@ -1,5 +1,5 @@
 {
-  "name": "frontend-vue-app",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "core-js": "^3.8.3",
-    "frontend-vue-app": "file:",
+    "frontend": "file:",
     "vue": "^3.2.13"
   },
   "devDependencies": {
