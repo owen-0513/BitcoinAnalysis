@@ -37,6 +37,10 @@
         <h2>比特幣未來價格預測</h2>
         <div v-if="predictedBtcPrice !== null">
           <p><strong>預測價格:</strong> ${{ predictedBtcPrice }}</p>
+          <p><strong>交易建議:</strong> {{ recommendations["交易建議"] }}</p>
+          <p><strong>建議買入價格:</strong> ${{ recommendations["建議買入價格"] }}</p>
+          <p><strong>止盈價格:</strong> ${{ recommendations["止盈價格"] }}</p>
+          <p><strong>止損價格:</strong> ${{ recommendations["止損價格"] }}</p>
         </div>
         <div v-else>
           <p>預測資料載入中...</p>
@@ -47,6 +51,10 @@
         <h2>以太幣未來價格預測</h2>
         <div v-if="predictedEthPrice !== null">
           <p><strong>預測價格:</strong> ${{ predictedEthPrice }}</p>
+          <p><strong>交易建議:</strong> {{ ethRecommendations["交易建議"] }}</p>
+          <p><strong>建議買入價格:</strong> ${{ ethRecommendations["建議買入價格"] }}</p>
+          <p><strong>止盈價格:</strong> ${{ ethRecommendations["止盈價格"] }}</p>
+          <p><strong>止損價格:</strong> ${{ ethRecommendations["止損價格"] }}</p>
         </div>
         <div v-else>
           <p>預測資料載入中...</p>
@@ -67,6 +75,8 @@ export default {
       ethereum: null,
       predictedBtcPrice: null,
       predictedEthPrice: null,
+      recommendations: {},  // 比特幣建議
+      ethRecommendations: {}, // 以太幣建議
       activeTab: 'btc',  // 初始顯示比特幣資料
     };
   },
@@ -88,9 +98,11 @@ export default {
       try {
         const btcResponse = await axios.get('http://172.20.10.6:5000/predict');
         this.predictedBtcPrice = btcResponse.data.predicted_price;
+        this.recommendations = btcResponse.data.recommendations; // 獲取比特幣建議
 
         const ethResponse = await axios.get('http://172.20.10.6:5000/predict_eth');
         this.predictedEthPrice = ethResponse.data.predicted_price;
+        this.ethRecommendations = ethResponse.data.recommendations; // 獲取以太幣建議
       } catch (error) {
         console.error("無法獲取預測價格：", error);
       }
