@@ -87,7 +87,7 @@ export default {
   methods: {
     async fetchCryptocurrencyData() {
       try {
-        const response = await axios.get('http://172.20.10.6:5000/cryptocurrency');
+        const response = await axios.get('https://bitcoinanalysis.onrender.com/cryptocurrency');  // 更新為公開的 API URL
         this.bitcoin = response.data.find(coin => coin.id === 'bitcoin');
         this.ethereum = response.data.find(coin => coin.id === 'ethereum');
       } catch (error) {
@@ -96,11 +96,11 @@ export default {
     },
     async fetchPredictedPrices() {
       try {
-        const btcResponse = await axios.get('http://172.20.10.6:5000/predict');
+        const btcResponse = await axios.get('https://bitcoinanalysis.onrender.com/predict');  // 更新為公開的 API URL
         this.predictedBtcPrice = btcResponse.data.predicted_price;
         this.recommendations = btcResponse.data.recommendations; // 獲取比特幣建議
 
-        const ethResponse = await axios.get('http://172.20.10.6:5000/predict_eth');
+        const ethResponse = await axios.get('https://bitcoinanalysis.onrender.com/predict_eth');  // 更新為公開的 API URL
         this.predictedEthPrice = ethResponse.data.predicted_price;
         this.ethRecommendations = ethResponse.data.recommendations; // 獲取以太幣建議
       } catch (error) {
