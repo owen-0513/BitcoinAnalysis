@@ -63,7 +63,7 @@ keras==3.2.1
 kiwisolver==1.4.5
 libclang==18.1.1
 line-bot-sdk==3.11.0
-linebot==0.1.6
+linebot==3.11.0
 llvmlite==0.43.0
 loguru==0.7.2
 lxml==5.2.2
