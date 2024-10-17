@@ -120,7 +120,6 @@ protobuf
 pure_eval
 pyasn1
 pyasn1_modules
-PyAudio
 pycparser
 pycryptodome
 pydantic
