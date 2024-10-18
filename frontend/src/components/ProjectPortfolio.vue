@@ -3,7 +3,7 @@
     <h1>我的作品集</h1>
 
     <p>點擊以下按鈕，訪問我的 LINE 作品連結。</p>
-    <p>功能基本介紹</p>
+    <h2>LineBot功能 基本介紹</h2>
     <p>這是line 機器人 套用 gpt-4o api 聊天</p>
     <a
       href="https://line.me/R/ti/p/@109mjice?from=page&liff.referrer=https%3A%2F%2Fpda.104.com.tw%2F&accountId=109mjice"
@@ -14,7 +14,7 @@
     </a>
 
     <p>點擊下方按鈕查看，訪問我的比特幣分析作品連結。</p>
-    <p>功能基本介紹</p>
+    <h2>SMC虛擬貨幣分析功能 基本介紹</h2>
     <p>這是使用 Python當後端 先去拉出歷史資料 再去做基本的機器學習 判定做多還是做空 並且算出止盈止損點位</p>
     <p>用Vue當前端 去渲染畫面</p>
     <p>使用SMC分析比特比與以太坊</p>
