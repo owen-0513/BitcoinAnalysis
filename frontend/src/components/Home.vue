@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <div class="quote">
-            <p>願我們的才能，都閃閃發光。</p>
+            <p>願我們的才能，都閃閃發光，且發揚光大。</p>
             <span class="author">— Owen 曾證蒼</span>
         </div>
     </div>
@@ -19,7 +19,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(to right, #653e97, #ab47bc);
+    background: linear-gradient(to right, #6b16db, #ab47bc);
     text-align: center;
     color: white;
 }
