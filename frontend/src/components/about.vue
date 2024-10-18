@@ -7,12 +7,6 @@
                 <a href="https://github.com/owen-0513" target="_blank" class="social-icon">
                     <i class="fab fa-github"></i>
                 </a>
-                <a href="https://www.linkedin.com/in/你的帳號" target="_blank" class="social-icon">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://owentseng.netlify.app" target="_blank" class="social-icon">
-                    <i class="fas fa-globe"></i>
-                </a>
             </div>
         </div>
 

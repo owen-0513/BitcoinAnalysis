@@ -2,10 +2,8 @@
   <div class="crypto-data">
     <h1>加密貨幣資訊</h1>
 
-    <!-- 動態圖片顯示 -->
     <img v-if="cryptoImage" :src="cryptoImage" alt="Cryptocurrency" class="crypto-image" />
 
-    <!-- 切換按鈕 -->
     <div class="tabs">
       <button @click="updateTab('btc')" :class="{ active: activeTab === 'btc' }">比特幣資料</button>
       <button @click="updateTab('eth')" :class="{ active: activeTab === 'eth' }">以太幣資料</button>
@@ -13,7 +11,6 @@
       <button @click="updateTab('eth_predict')" :class="{ active: activeTab === 'eth_predict' }">以太幣預測</button>
     </div>
 
-    <!-- 動態顯示不同的資料內容 -->
     <div class="tab-content">
       <div v-if="activeTab === 'btc'">
         <div class="data-section" v-if="bitcoin">
