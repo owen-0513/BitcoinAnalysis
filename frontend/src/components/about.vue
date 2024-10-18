@@ -73,43 +73,35 @@ export default {
 </script>
 
 <style scoped>
-/* 自我介紹的容器樣式，移除背景色並使用白色背景 */
 .self-intro {
     text-align: center;
     padding: 80px 20px;
     background-color: white;
-    /* 設置為白色背景 */
     color: black;
-    /* 設置文本為黑色 */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    /* 內容靠近頂部 */
 }
 
 .intro-header {
     margin-bottom: 40px;
 }
 
-/* 控制圖片的大小和邊框 */
 .profile-photo {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* 輕微陰影讓圖片看起來更立體 */
 }
 
-/* 標題樣式 */
 h1 {
     font-size: 36px;
     margin-bottom: 20px;
 }
 
-/* 子標題樣式 */
 h2 {
     font-size: 28px;
     margin-top: 40px;
@@ -121,7 +113,6 @@ h3 {
     margin-bottom: 10px;
 }
 
-/* 社交鏈接樣式 */
 .social-links {
     margin-top: 20px;
 }
@@ -129,18 +120,15 @@ h3 {
 .social-icon {
     font-size: 36px;
     color: black;
-    /* 設置為黑色 */
     margin: 0 10px;
     transition: color 0.3s, transform 0.3s;
 }
 
 .social-icon:hover {
     color: #007bff;
-    /* 懸停時顯示藍色 */
     transform: scale(1.1);
 }
 
-/* 內容的最大寬度設置 */
 .intro-content {
     max-width: 800px;
     font-size: 18px;

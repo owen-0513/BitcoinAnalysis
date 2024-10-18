@@ -7,22 +7,20 @@ def fetch_historical_data(coin, filename):
     API_URL = f"https://api.coingecko.com/api/v3/coins/{coin}/market_chart"
     params = {
         "vs_currency": "usd",
-        "days": "30",  # 取最近30天的數據
+        "days": "30", 
         "interval": "daily",
     }
 
     try:
         response = requests.get(API_URL, params=params)
-        response.raise_for_status()  # 檢查請求是否成功
+        response.raise_for_status() 
         data = response.json()
 
-        # 確保數據結構正確
         if "prices" in data:
             prices = data["prices"]
             df = pd.DataFrame(prices, columns=["timestamp", "price"])
             df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
 
-            # 儲存到 CSV
             df.to_csv(filename, index=False)
             print(f"{coin.capitalize()} 歷史數據已保存到 '{filename}'")
         else:
