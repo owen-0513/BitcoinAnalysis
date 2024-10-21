@@ -108,7 +108,8 @@ def predict_eth():
 
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()
-    scheduler.add_job(fetch_and_update_data, "interval", hours=1)
+    scheduler.add_job(fetch_and_update_data, "interval", minutes=5)
     scheduler.start()
     fetch_and_update_data()  
     app.run(host="0.0.0.0", port=5000, debug=True)
+
