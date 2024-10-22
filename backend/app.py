@@ -4,13 +4,14 @@ import pandas as pd
 import joblib
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 # 載入預訓練模型
-model = joblib.load("bitcoin_price_model.pkl")
-eth_model = joblib.load("ethereum_price_model.pkl")
+model = joblib.load(os.getenv("BITCOIN_MODEL_PATH", "bitcoin_price_model.pkl"))
+eth_model = joblib.load(os.getenv("ETHEREUM_MODEL_PATH", "ethereum_price_model.pkl"))
 
 def fetch_and_update_data():
     """抓取比特幣和以太幣的即時市場數據並保存到本地 CSV 文件"""
@@ -24,18 +25,18 @@ def fetch_and_update_data():
         "sparkline": False,
     }
 
-    response = requests.get(BITCOIN_API_URL, params=PARAMS)
-
-    if response.status_code == 200:
+    try:
+        response = requests.get(BITCOIN_API_URL, params=PARAMS)
+        response.raise_for_status()
         data = response.json()
-        if len(data) > 0:
+        if data:
             df = pd.DataFrame(data)
             df.to_csv("cryptocurrency_prices.csv", index=False)
             print("比特幣和以太幣資料已更新")
         else:
             print("未能獲取數據")
-    else:
-        print(f"請求失敗，狀態碼: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"請求失敗: {e}")
 
 @app.route("/cryptocurrency", methods=["GET"])
 def get_cryptocurrency_data():
@@ -78,59 +79,10 @@ def calculate_recommendations(last_price, rsi, macd, signal_line, smc_support, s
         "交易建議": position
     }
 
-@app.route("/predict", methods=["GET"])
-def predict():
-    """預測比特幣價格並生成交易建議"""
+def predict_price(asset):
+    """通用的預測函數，用於比特幣和以太幣的價格預測"""
     try:
-        df = pd.read_csv("btc_features.csv")
-
-        # 檢查 CSV 文件中的欄位是否存在
-        print("CSV 文件中的欄位:", df.columns)
-
-        # 確保沒有空值
-        df.fillna(0, inplace=True)
-
-        last_price = df["price"].iloc[-1]
-        features = {
-            "price_lag_1": last_price,
-            "price_lag_2": df["price"].iloc[-2],
-            "rolling_mean_5": df["rolling_mean_5"].iloc[-1],
-            "rolling_mean_10": df["rolling_mean_10"].iloc[-1],
-            "rsi": df["rsi"].iloc[-1],
-            "macd": df["macd"].iloc[-1],  # 確保此欄位存在
-            "signal_line": df["signal_line"].iloc[-1],  # 確保此欄位存在
-            "smc_support": df["smc_support"].iloc[-1],
-            "smc_resistance": df["smc_resistance"].iloc[-1],
-        }
-        features_df = pd.DataFrame([features])
-        prediction = model.predict(features_df)
-
-        recommendations = calculate_recommendations(
-            last_price,
-            features["rsi"],
-            features["macd"],
-            features["signal_line"],
-            features["smc_support"],
-            features["smc_resistance"]
-        )
-
-        return jsonify({
-            "predicted_price": prediction[0],
-            "recommendations": recommendations
-        })
-    except KeyError as e:
-        # 如果有欄位不存在，打印具體是哪個欄位缺失
-        print(f"KeyError - 缺少的欄位: {e}")
-        return jsonify({"error": f"缺少的欄位: {e}"}), 500
-    except Exception as e:
-        print(f"其他錯誤: {e}")
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/predict_eth", methods=["GET"])
-def predict_eth():
-    """預測以太幣價格並生成交易建議"""
-    try:
-        df = pd.read_csv("eth_features.csv")
+        df = pd.read_csv(f"{asset}_features.csv")
 
         # 確保沒有空值
         df.fillna(0, inplace=True)
@@ -148,7 +100,9 @@ def predict_eth():
             "smc_resistance": df["smc_resistance"].iloc[-1],
         }
         features_df = pd.DataFrame([features])
-        prediction = eth_model.predict(features_df)
+        
+        # 根據資產名稱選擇模型
+        prediction = (model if asset == "btc" else eth_model).predict(features_df)
 
         recommendations = calculate_recommendations(
             last_price,
@@ -159,13 +113,47 @@ def predict_eth():
             features["smc_resistance"]
         )
 
-        return jsonify({
+        return {
             "predicted_price": prediction[0],
             "recommendations": recommendations
-        })
+        }
     except KeyError as e:
         print(f"KeyError - 缺少的欄位: {e}")
-        return jsonify({"error": f"缺少的欄位: {e}"}), 500
+        return {"error": f"缺少的欄位: {e}"}
+    except Exception as e:
+        print(f"其他錯誤: {e}")
+        return {"error": str(e)}
+
+@app.route("/predict", methods=["GET"])
+def predict():
+    """預測比特幣價格並生成交易建議"""
+    try:
+        df = pd.read_csv("btc_features.csv")
+
+        # 確保沒有空值
+        df.fillna(0, inplace=True)
+
+        last_price = df["price"].iloc[-1]
+        result = predict_price("btc")
+        result["current_price"] = last_price  # 添加當前價格
+        return jsonify(result)
+    except Exception as e:
+        print(f"其他錯誤: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/predict_eth", methods=["GET"])
+def predict_eth():
+    """預測以太幣價格並生成交易建議"""
+    try:
+        df = pd.read_csv("eth_features.csv")
+
+        # 確保沒有空值
+        df.fillna(0, inplace=True)
+
+        last_price = df["price"].iloc[-1]
+        result = predict_price("eth")
+        result["current_price"] = last_price  # 添加當前價格
+        return jsonify(result)
     except Exception as e:
         print(f"其他錯誤: {e}")
         return jsonify({"error": str(e)}), 500

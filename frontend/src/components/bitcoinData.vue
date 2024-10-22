@@ -64,6 +64,8 @@
       <div v-if="activeTab === 'btc_predict'">
         <h2>比特幣未來價格預測</h2>
         <div class="data-section" v-if="predictedBtcPrice !== null">
+          <p><strong>當前價格:</strong> ${{ currentBtcPrice }}</p>
+          <!-- 顯示當前價格 -->
           <p><strong>預測價格:</strong> ${{ predictedBtcPrice }}</p>
           <p>
             <strong>建議買入價格:</strong> ${{
@@ -84,6 +86,8 @@
       <div v-if="activeTab === 'eth_predict'">
         <h2>以太幣未來價格預測</h2>
         <div class="data-section" v-if="predictedEthPrice !== null">
+          <p><strong>當前價格:</strong> ${{ currentEthPrice }}</p>
+          <!-- 顯示當前價格 -->
           <p><strong>預測價格:</strong> ${{ predictedEthPrice }}</p>
           <p>
             <strong>建議買入價格:</strong> ${{
@@ -122,6 +126,8 @@ export default {
       recommendations: {},
       ethRecommendations: {},
       predictionTime: null, // 新增預測生成時間
+      currentBtcPrice: null, // 新增當前比特幣價格
+      currentEthPrice: null, // 新增當前以太幣價格
     };
   },
   mounted() {
@@ -145,11 +151,10 @@ export default {
         const response = await axios.get(
           "https://bitcoinanalysis.onrender.com/cryptocurrency"
         );
-        // const response = await axios.get(
-        //   "http://192.168.1.125:5000/cryptocurrency"
-        // );
         this.bitcoin = response.data.find((coin) => coin.id === "bitcoin");
         this.ethereum = response.data.find((coin) => coin.id === "ethereum");
+        this.currentBtcPrice = this.bitcoin.current_price; // 設定當前比特幣價格
+        this.currentEthPrice = this.ethereum.current_price; // 設定當前以太幣價格
       } catch (error) {
         console.error("無法獲取加密貨幣資料：", error);
       }
@@ -159,9 +164,6 @@ export default {
         const btcResponse = await axios.get(
           "https://bitcoinanalysis.onrender.com/predict"
         );
-        // const btcResponse = await axios.get(
-        //   "http://192.168.1.125:5000/predict"
-        // );
         this.predictedBtcPrice = btcResponse.data.predicted_price;
         this.recommendations = btcResponse.data.recommendations;
         this.predictionTime = new Date().toLocaleString(); // 設定預測生成時間
@@ -169,9 +171,6 @@ export default {
         const ethResponse = await axios.get(
           "https://bitcoinanalysis.onrender.com/predict_eth"
         );
-        // const ethResponse = await axios.get(
-        //   "http://192.168.1.125:5000/predict_eth"
-        // );
         this.predictedEthPrice = ethResponse.data.predicted_price;
         this.ethRecommendations = ethResponse.data.recommendations;
       } catch (error) {
