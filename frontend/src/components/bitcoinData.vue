@@ -149,7 +149,7 @@ export default {
     async fetchCryptocurrencyData() {
       try {
         const response = await axios.get(
-          "http://192.168.1.125:5000/cryptocurrency"
+          "https://bitcoinanalysis.onrender.com/cryptocurrency"
         );
         this.bitcoin = response.data.find((coin) => coin.id === "bitcoin");
         this.ethereum = response.data.find((coin) => coin.id === "ethereum");
@@ -162,14 +162,14 @@ export default {
     async fetchPredictedPrices() {
       try {
         const btcResponse = await axios.get(
-          "http://192.168.1.125:5000/predict"
+          "https://bitcoinanalysis.onrender.com/predict"
         );
         this.predictedBtcPrice = btcResponse.data.predicted_price;
         this.recommendations = btcResponse.data.recommendations;
         this.predictionTime = new Date().toLocaleString(); // 設定預測生成時間
 
         const ethResponse = await axios.get(
-          "http://192.168.1.125:5000/predict_eth"
+          "https://bitcoinanalysis.onrender.com/predict_eth"
         );
         this.predictedEthPrice = ethResponse.data.predicted_price;
         this.ethRecommendations = ethResponse.data.recommendations;
