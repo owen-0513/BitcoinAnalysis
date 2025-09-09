@@ -5,6 +5,9 @@ import joblib
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
+from datetime import datetime, timedelta
+
+from feature_engineering import update_feature_files
 
 app = Flask(__name__)
 CORS(app)
@@ -33,10 +36,27 @@ def fetch_and_update_data():
             df = pd.DataFrame(data)
             df.to_csv("cryptocurrency_prices.csv", index=False)
             print("比特幣和以太幣資料已更新")
+            return True
         else:
             print("未能獲取數據")
     except requests.exceptions.RequestException as e:
         print(f"請求失敗: {e}")
+
+    return False
+
+
+def ensure_features_current(max_age_minutes=5):
+    """確認特徵檔案在指定時間內已更新，否則重新生成"""
+    now = datetime.utcnow()
+    for asset in ["btc", "eth"]:
+        path = f"{asset}_features.csv"
+        if not os.path.exists(path):
+            update_feature_files()
+            return
+        mtime = datetime.utcfromtimestamp(os.path.getmtime(path))
+        if now - mtime > timedelta(minutes=max_age_minutes):
+            update_feature_files()
+            return
 
 @app.route("/cryptocurrency", methods=["GET"])
 def get_cryptocurrency_data():
@@ -128,6 +148,7 @@ def predict_price(asset):
 def predict():
     """預測比特幣價格並生成交易建議"""
     try:
+        ensure_features_current()
         df = pd.read_csv("btc_features.csv")
 
         # 確保沒有空值
@@ -145,6 +166,7 @@ def predict():
 def predict_eth():
     """預測以太幣價格並生成交易建議"""
     try:
+        ensure_features_current()
         df = pd.read_csv("eth_features.csv")
 
         # 確保沒有空值
@@ -158,10 +180,15 @@ def predict_eth():
         print(f"其他錯誤: {e}")
         return jsonify({"error": str(e)}), 500
 
+def scheduled_job():
+    if fetch_and_update_data():
+        update_feature_files()
+
+
 if __name__ == "__main__":
-    # 定時抓取數據
+    # 定時抓取數據並更新特徵
     scheduler = BackgroundScheduler()
-    scheduler.add_job(fetch_and_update_data, "interval", minutes=5)
+    scheduler.add_job(scheduled_job, "interval", minutes=5)
     scheduler.start()
-    fetch_and_update_data()  
+    scheduled_job()
     app.run(host="0.0.0.0", port=5000, debug=True)
