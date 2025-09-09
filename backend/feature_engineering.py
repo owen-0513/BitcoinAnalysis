@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+from get_historical_data import update_historical_data
 
 def calculate_rsi(series, window):
     """計算相對強弱指標 (RSI)"""
@@ -63,15 +64,21 @@ def calculate_features(df, asset_name):
     df.to_csv(output_filename, index=False)
     print(f"{asset_name} 的特徵數據已保存到 {output_filename}")
 
-def main():
-    """主函數：讀取數據並計算特徵"""
-    # 讀取數據
+
+def update_feature_files():
+    """更新歷史數據並重新計算特徵"""
+    update_historical_data("bitcoin", "bitcoin_historical_prices.csv")
+    update_historical_data("ethereum", "ethereum_historical_prices.csv")
+
     btc_df = pd.read_csv("bitcoin_historical_prices.csv")
     eth_df = pd.read_csv("ethereum_historical_prices.csv")
 
-    # 計算特徵
     calculate_features(btc_df, "BTC")
     calculate_features(eth_df, "ETH")
+
+def main():
+    """主函數：更新並計算特徵"""
+    update_feature_files()
 
 if __name__ == "__main__":
     main()
